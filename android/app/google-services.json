@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "259298175512",
+    "firebase_url": "https://explorify24-f06aa-default-rtdb.firebaseio.com",
+    "project_id": "explorify24-f06aa",
+    "storage_bucket": "explorify24-f06aa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259298175512:android:7670af24990215a8dd716d",
+        "android_client_info": {
+          "package_name": "com.example.explorify"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "259298175512-f55sfirotdnt80g8coots1us3gkr46o1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD2KyWmtShB1Q5q8c31o1em-ZSd-loaCf0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "259298175512-f55sfirotdnt80g8coots1us3gkr46o1.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "259298175512-nargji231otmtm9qg05l72o7ci3a0t5r.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.explorify"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
