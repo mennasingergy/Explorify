@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Post {
+  final String id;
   final String imageURL;
   final String title;
   final String? description;
@@ -13,6 +14,7 @@ class Post {
   bool? isFavorite;
 
   Post({
+    required this.id,
     required this.imageURL,
     required this.title,
     this.description,
@@ -29,6 +31,7 @@ class Post {
     final data = snapshot.data() as Map<String, dynamic>;
 
     return Post(
+      id: data['id'],
       imageURL: data['imageURL'],
       title: data['title'],
       description: data['description'],

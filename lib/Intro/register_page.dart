@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class RegisterPage extends StatefulWidget {
   final VoidCallback showLoginPage;
@@ -11,9 +12,21 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final _usernameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmpasswordController = TextEditingController();
+
+  // Future<void> addUserInformation(
+  //     String userId, String username, String email) {
+  //   CollectionReference usersCollection =
+  //       FirebaseFirestore.instance.collection('Users');
+
+  //   return usersCollection.doc(userId).set({
+  //     'username': username,
+  //     'email': email,
+  //   });
+  // }
 
   Future signUp() async {
     if (passwordConfirmed()) {
@@ -21,6 +34,32 @@ class _RegisterPageState extends State<RegisterPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
+      final User? user = FirebaseAuth.instance.currentUser;
+      final Map<String, dynamic> addedUser = {
+        // Generate UUID using the v4 method
+        'email': _emailController.text,
+        'favorites': [],
+        'name': _usernameController.text,
+      };
+      try {
+        await FirebaseFirestore.instance.collection('Users').add(addedUser);
+      } on FirebaseAuthException catch (e) {
+        showDialog(
+            context: context,
+            builder: (context) {
+              return AlertDialog(
+                  backgroundColor: Color.fromARGB(255, 182, 142, 86),
+                  title: Text(e.code),
+                  actions: [
+                    FloatingActionButton(
+                        backgroundColor: Color.fromARGB(207, 188, 106, 29),
+                        child: Text("OK"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        })
+                  ]);
+            });
+      }
     } else {
       showDialog(
           context: context,
@@ -39,14 +78,6 @@ class _RegisterPageState extends State<RegisterPage> {
                       })
                 ]);
           });
-
-      // showDialog(
-      // context: context,
-      // builder: (context) {
-      //   return AlertDialog(
-      //     content: Text(e.message.toString()),
-      //   );
-      // });
     }
   }
 
@@ -90,6 +121,23 @@ class _RegisterPageState extends State<RegisterPage> {
                       controller: _emailController,
                       decoration: InputDecoration(
                           border: InputBorder.none, hintText: 'Email')),
+                ),
+              ),
+            ),
+            SizedBox(height: 10),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25.0),
+              child: Container(
+                decoration: BoxDecoration(
+                    color: Colors.white24,
+                    border: Border.all(color: Colors.white12),
+                    borderRadius: BorderRadius.circular(12)),
+                child: Padding(
+                  padding: const EdgeInsets.only(left: 20.0),
+                  child: TextField(
+                      controller: _usernameController,
+                      decoration: InputDecoration(
+                          border: InputBorder.none, hintText: 'Username')),
                 ),
               ),
             ),

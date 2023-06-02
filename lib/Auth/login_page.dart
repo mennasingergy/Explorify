@@ -5,6 +5,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'forgot_pw_page.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginPage extends StatefulWidget {
   final VoidCallback showRegisterPage;
@@ -23,9 +24,86 @@ class _LoginPageState extends State<LoginPage> {
 //signIn method
 
   Future signIn() async {
-    await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim());
+    showDialog(
+        context: context,
+        builder: (context) {
+          return const Center(
+              child: CircularProgressIndicator(color: Colors.amber));
+        });
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim());
+      Navigator.pop(context);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        wrongEmailMesage();
+      } else if (e.code == 'wrong-password') {
+        wrongPasswordMesage();
+      }
+    }
+  }
+
+  void wrongEmailMesage() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              backgroundColor: Color.fromARGB(255, 182, 142, 86),
+              title: Text("Incorrect Email"),
+              actions: [
+                FloatingActionButton(
+                    backgroundColor: Color.fromARGB(207, 188, 106, 29),
+                    child: Text("OK"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    })
+              ]);
+        });
+  }
+
+  void wrongPasswordMesage() {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              backgroundColor: Color.fromARGB(255, 182, 142, 86),
+              title: Text("Incorrect Password"),
+              actions: [
+                FloatingActionButton(
+                    backgroundColor: Color.fromARGB(207, 188, 106, 29),
+                    child: Text("OK"),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    })
+              ]);
+        });
+  }
+
+  void showController(BuildContext myContext) async {
+    {
+      Navigator.of(myContext).pushNamed('/categoriesRoute');
+    }
+    try {
+      final userCredential = await FirebaseAuth.instance.signInAnonymously();
+    } on FirebaseAuthException catch (e) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+                backgroundColor: Color.fromARGB(255, 182, 142, 86),
+                title: Text(e.code),
+                actions: [
+                  FloatingActionButton(
+                      backgroundColor: Color.fromARGB(207, 188, 106, 29),
+                      child: Text("OK"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      })
+                ]);
+          });
+    }
   }
 
   @override
@@ -130,7 +208,14 @@ class _LoginPageState extends State<LoginPage> {
                     style: TextStyle(
                         color: Colors.blue, fontWeight: FontWeight.bold)),
               )
-            ])
+            ]),
+            SizedBox(height: 20),
+            GestureDetector(
+              onTap: () => showController(context),
+              child: Text(' Continue as a guest',
+                  style: TextStyle(
+                      color: Colors.blue, fontWeight: FontWeight.bold)),
+            )
           ]),
         ),
       )),

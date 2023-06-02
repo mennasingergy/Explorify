@@ -1,38 +1,36 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:explorify/Post/postCard.dart';
 import 'package:flutter/material.dart';
-import 'post.dart';
-import 'postCard.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 
 class PostScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final routeArgs =
         ModalRoute.of(context)!.settings.arguments as Map<String, dynamic>;
+    final postId = routeArgs['postId'];
 
-    //final post = routeArgs['post'] as Post;
-    var postInstance = FirebaseFirestore.instance.collection("Posts");
-    var stream = postInstance.snapshots();
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: stream,
+    return StreamBuilder<DocumentSnapshot>(
+      stream: FirebaseFirestore.instance.collection('Posts').doc(postId).snapshots(),
       builder: (context, snapshot) {
         if (snapshot.hasData) {
-          return Scaffold(
-            appBar: AppBar(
-              title: Text("Post"),
-            ),
-            body: ListView.builder(
-              itemCount: snapshot.data!.docs.length,
-              itemBuilder: (context, index) {
-                var document = snapshot.data!.docs[index];
-                return PostCard(postSnapshot: document);
-              },
-            ),
-          );
+          final postSnapshot = snapshot.data;
+
+          if (postSnapshot != null && postSnapshot.exists) {
+            return PostCard(postSnapshot: postSnapshot);
+          } else {
+            return Center(
+              child: Text('Post not found'),
+            );
+          }
         } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+          return Center(
+            child: Text('Error fetching post'),
+          );
         } else {
-          return const CircularProgressIndicator();
+          return Center(
+            child: CircularProgressIndicator(),
+          );
         }
       },
     );
